@@ -1,0 +1,23 @@
+{%extends 'main.html'%} {%block title%}Home{%endblock%}
+{%block navbar_management%}{%endblock%}
+{%block navbar_fullsearch%}{%endblock%}
+{%block navbar_home%}{%endblock%}
+{%block content%}
+<style>
+    .image-container {
+        float: none;
+        margin-left: 60rem;
+        margin-top: 5rem;
+        max-width: 100%;
+        height: auto;
+        align-items: center;
+    }
+</style>
+<div class="image-container">
+    <img
+        src="{{ url_for('static', filename='images/backgroup_inicio.png') }}"
+        height="400"
+        width="600"
+            />
+</div>
+{%endblock%}

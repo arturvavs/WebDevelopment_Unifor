@@ -1,0 +1,146 @@
+{% extends 'main.html' %} 
+{% block title %}Gestão Administrativa{% endblock %}
+{% block navbar_login %}{% endblock %}
+{% block navbar_register %}{% endblock %}
+{% block navbar_fullsearch%}{%endblock%}
+{% block content %}
+<style>
+    .form-floating {
+        margin-top: 2rem;
+        width: 15rem; /* Ajuste a largura conforme necessário */
+        margin-left: 1rem;
+    }
+    #floatingSelectGrid, #floatingInputGrid{
+        border-color: black;
+    }
+
+    .custom-form-control {
+        width: 100%;
+        margin: 0 auto; /* Alinha ao centro se desejar */
+    }
+    .btn-primary{
+        width: 5.5rem;
+        height: 3.5rem;
+
+    }
+</style>
+
+<div class="row g-2">
+    <div class="form-floating">
+        <select class="form-select custom-form-control" id="floatingSelectGrid">
+            <option selected>Nome</option>
+            <option value="1">Usuário</option>
+        </select>
+        <label for="floatingSelectGrid">Procurar por:</label>
+    </div>
+    <div class="form-floating">
+        <input type="text" class="form-control custom-form-control" id="floatingInputGrid">
+        <label for="floatingInputGrid"></label>
+    </div>
+    <div class="form-floating">
+        <button type="button" class="btn btn-primary custom-form-control">Procurar</button>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">P. Nome</th>
+                <th scope="col">U. Nome</th>
+                <th scope="col">Usuário</th>
+                <th scope="col">Email</th>
+                <th scope="col">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for valor in decoded_result %}
+                <tr>
+                    <th scope="row">{{ valor.NM_PRIMEIRO_NOME }}</th>
+                    <td>{{ valor.NM_ULTIMO_NOME }}</td>
+                    <td>{{ valor.NM_USUARIO }}</td>
+                    <td>{{ valor.DS_EMAIL }}</td>
+                    <td>
+                        <button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-user-id="{{ valor.nr_sequencia }}">Editar</button>
+                        <button type="button" class="btn btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-user-id="{{ valor.nr_sequencia }}">Excluir</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="confirmModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="confirmModalLabel">Confirmação</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Você tem certeza que deseja realizar esta ação?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmActionBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        var userId; // Variável para armazenar o ID do usuário a ser editado ou excluído
+
+        $('.edit-btn, .delete-btn').click(function () {
+            userId = $(this).data('user-id');
+        });
+
+        $('#confirmModal').on('show.bs.modal', function (e) {
+            // Configurar a ação apropriada (editar ou excluir) com base no botão clicado
+            if ($('.edit-btn:focus').length > 0) {
+                // Ação de editar
+                $('#confirmActionBtn').data('action', 'edit');
+            } else if ($('.delete-btn:focus').length > 0) {
+                // Ação de excluir
+                $('#confirmActionBtn').data('action', 'delete');
+            }
+        });
+
+        $('#confirmActionBtn').click(function () {
+            var action = $(this).data('action');
+
+            // Verificar a ação a ser executada
+            if (action === 'edit') {
+                // Ação de editar
+                // Enviar requisição PUT
+                $.ajax({
+                    url: '/user/' + userId,
+                    type: 'PUT',
+                    contentType: 'application/json',
+                    success: function (result) {
+                        console.log(result);
+                        // Atualizar a tabela ou fazer outras ações necessárias
+                    }
+                });
+            } else if (action === 'delete') {
+                // Ação de excluir
+                // Enviar requisição DELETE
+                $.ajax({
+                    url: '/user/' + userId,
+                    type: 'DELETE',
+                    success: function (result) {
+                        console.log(result);
+                        // Atualizar a tabela ou fazer outras ações necessárias
+                    }
+                });
+            }
+
+            // Fechar o modal após o processamento
+            $('#confirmModal').modal('hide');
+        });
+    });
+</script>
+{% endblock %}

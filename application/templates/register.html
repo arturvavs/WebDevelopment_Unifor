@@ -1,0 +1,117 @@
+{% extends 'main.html' %} {% block title %}Register{% endblock %} {% block
+navbar_fullsearch %}{% endblock %} {% block navbar_register %}{% endblock %} {%
+block navbar_management %}{% endblock %} {% block content %}
+<style>
+  .form-group {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 25rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    margin-top: 1rem;
+    width: 100%;
+  }
+
+  /* Estilo para os campos de entrada */
+  input {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    box-sizing: border-box;
+  }
+</style>
+
+<form method="POST" class="form-group" autocomplete="off" id="userRegister">
+  <h3 align="center">Cadastro</h3>
+
+  <div>
+    <label for="firstName">Primeiro nome</label>
+    <input
+      type="text"
+      class="form-control"
+      id="firstName"
+      name="firstName"
+      placeholder="Informe seu primeiro nome"
+    />
+  </div>
+
+  <div>
+    <label for="lastName">Último nome</label>
+    <input
+      type="text"
+      class="form-control"
+      id="lastName"
+      name="lastName"
+      placeholder="Informe seu último nome"
+    />
+  </div>
+
+  <div>
+    <label for="userName">Nome de Usuário</label>
+    <input
+      type="text"
+      class="form-control"
+      id="userName"
+      name="userName"
+      placeholder="Informe o nome de usuário desejado"
+    />
+  </div>
+
+  <div>
+    <label for="userEmail">Email</label>
+    <input
+      type="email"
+      class="form-control"
+      id="userEmail"
+      name="userEmail"
+      placeholder="Informe seu email"
+    />
+  </div>
+
+  <div>
+    <label for="passWord">Senha</label>
+    <input
+      type="password"
+      class="form-control"
+      id="passWord"
+      name="passWord"
+      placeholder="Informe uma senha"
+    />
+  </div>
+
+  <div>
+    <label for="passWord_confirm">Senha (Confirmação)</label>
+    <input
+      type="password"
+      class="form-control"
+      id="passWord_confirm"
+      name="passWord_confirm"
+      placeholder="Confirme a senha"
+    />
+    <span id="message"></span>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Cadastrar</button>
+  <a class="btn btn-secondary" href="/home" role="button">Cancelar</a>
+</form>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $("#passWord, #passWord_confirm").on("keyup", function () {
+      if ($("#passWord").val() == $("#passWord_confirm").val()) {
+        $("#message").html("").css("color", "green");
+      } else {
+        $("#message").html("Senhas não confere").css("color", "red");
+      }
+    });
+  });
+  document.addEventListener("DOMContentLoaded", function () {
+    // Limpar os campos do formulário ao carregar a página
+    document.getElementById("userRegister").reset();
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+{%extends 'main.html'%} {%block title%}Login{%endblock%}
+{%block navbar_login%}{%endblock%}
+{%block navbar_fullsearch%}{%endblock%}
+{%block navbar_management%}{%endblock%}
+{%block content%}
+<style>
+    .form-group{
+        margin: 0 auto;
+        width: 100%;
+        max-width: 25rem;
+        padding: 2rem;
+    }
+
+    .btn-primary{
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+    .btn-secondary{
+        margin-top: 1rem;
+        width: 100%;
+    }
+
+</style>
+
+<div class="container">
+    <form class="form-group" method="POST" autocomplete="off">
+        <h3 align="center">Login</h3>
+        <div>
+            <label for="userName"></label>
+            <input type="text" class="form-control" id="userName" name="userName" placeholder="Usuario"/>
+    
+        </div>
+    
+        <div>
+            <label for="passWord"></label>
+            <input type="password" class="form-control" id="passWord" name="passWord" placeholder="Senha"/>
+    
+        </div>
+
+        <div class="buttons">
+            <button type="submit" class="btn btn-primary">Login</button>
+            <a class="btn btn-secondary" href="/home" role="button">Voltar</a>
+        </div>
+    </form>
+</div>
+{%endblock%}
