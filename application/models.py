@@ -1,5 +1,5 @@
 
-from flask import Blueprint, render_template, request, flash, redirect, url_for,jsonify
+from flask import Blueprint
 from pymongo import MongoClient
 import json
 
@@ -32,21 +32,6 @@ class MongoDB():
         if self.client:
             self.client.close()
             print("Conexão ao MongoDB Atlas encerrada.")
-
-    #def userLogin(self):
-    #    self.dbConnect
-        
-'''uri = "mongodb+srv://root:root123@cluster0.o64y1wi.mongodb.net/?retryWrites=true&w=majority"
-client = MongoClient(uri)
-db = client.webDevelopement
-firstName = 'admin2'
-userName = 'admin'
-atributos = {"_id":0,"NM_PRIMEIRO_NOME":1,"NM_ULTIMO_NOME":1,"NM_USUARIO":1,"DS_EMAIL":1}
-usuarios = list(db.user.find({},atributos))
-for usuario in usuarios:
-    print(usuario)'''
-
-
     
 class User(MongoDB):
     def __init__(self):
@@ -100,11 +85,30 @@ class User(MongoDB):
             return "Falha ao executar função:", {error}
         return validation
             
-    def listUsers(self):
+    def deleteUser(self,userName):
         self.dbConnect()
-        atributos = {"_id":0,"NM_PRIMEIRO_NOME":1,"NM_ULTIMO_NOME":1,"NM_USUARIO":1,"DS_EMAIL":1}
-        usuarios = list(self.db.user.find({},atributos))
-        json_result = json.dumps(usuarios)
-        return json_result
-   
+        user_delete = {"NM_USUARIO":userName}
+        if not userName:
+            print('Usuário não encontrado')
+        else:
+            self.db.user.delete_one(user_delete)
+    
+    def listUser(self,search_type,search_input):
+        self.dbConnect()
+        projection = {"NM_PRIMEIRO_NOME": 1, "NM_ULTIMO_NOME": 1, "NM_USUARIO": 1, "DS_EMAIL": 1, "_id": 0}
+        if not search_input or not search_type:
+            users = list(self.db.user.find({},projection))
+            json_result = json.dumps(users)
+            return json_result
+        else:
+            if search_type == 'firstName':
+                users = list(self.db.user.find({"NM_PRIMEIRO_NOME":search_input},projection))
+                json_result = json.dumps(users)
+                return json_result
+            elif search_type =='userName':
+                users = list(self.db.user.find({"NM_USUARIO":search_input},projection))
+                json_result = json.dumps(users)
+                return json_result
+        
+
         
