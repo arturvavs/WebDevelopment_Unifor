@@ -1,6 +1,4 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for,jsonify
-from pymongo import MongoClient
-from flask import current_app
 import json
 from application.models import MongoDB
 from application.models import User
@@ -9,79 +7,58 @@ auth = Blueprint('auth', __name__)
 
 db = MongoDB() #Instancio a classe MongoDB
 user = User()
-@auth.route('/')
-def conexao_teste():
-    print('entrou conexao teste')
-    return jsonify({'mensagem': 'Conexão bem-sucedida ao MongoDB Atlas!'})
-
 
 @auth.route('/home')
 def home():
-    print(jsonify({'mensagem': 'Conexão bem-sucedida ao MongoDB Atlas!'}))
     return render_template("home.html")
 
 
-@auth.route('/login',methods=['GET','POST'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method =='POST':
-        userName = request.form.get('userName').upper()
-        passWord = request.form.get('passWord')
-        print(userName,passWord)
-        validation = user.userLogin(userName,passWord)
-        if validation == True:
-            return redirect(url_for('views.user_managemant'))
-        else:
-            flash('Falha na autenticação do usuário',category='error')   
-    else:
-        print('Error ao executar função login')
+    if request.method == 'POST':
+        username = request.form.get('userName').upper()
+        password = request.form.get('passWord')
+        validation = user.userLogin(username, password)
+        if validation:
+            return redirect(url_for('views.user_management'))
+        flash('Falha na autenticação do usuário', category='error')
     return render_template("login.html")
 
-@auth.route('/register',methods=['GET','POST'])
+
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        firstName = request.form.get('firstName').upper()
-        lastName = request.form.get('lastName').upper()
-        userName = request.form.get('userName').upper()
-        userEmail = request.form.get('userEmail').upper()
-        passWord = request.form.get('passWord')
-        if not firstName or not lastName or not userName or not userEmail or not passWord:
-            flash('Existe campos no formulário não preenchidos', category='error')
+        first_name = request.form.get('firstName').upper()
+        last_name = request.form.get('lastName').upper()
+        username = request.form.get('userName').upper()
+        user_email = request.form.get('userEmail').upper()
+        password = request.form.get('passWord')
+        if not all([first_name, last_name, username, user_email, password]):
+            flash('Existem campos no formulário não preenchidos', category='error')
             return render_template("register.html")
-        else:
-            validation = user.userRegister(firstName,lastName,userName,userEmail,passWord)
-            if validation == True:
-                flash('Cadastro efetuado com sucesso!', category='success')
-                return redirect(url_for('views.login'))
-            else:
-                print('Falha no registro do usuário')
-                flash('Nome de usuário ou email já utilizados', category='error')
-                return render_template("register.html")
-
+        validation = user.userRegister(first_name, last_name, username, user_email, password)
+        if validation:
+            flash('Cadastro efetuado com sucesso!', category='success')
+            return redirect(url_for('views.login'))
+        flash('Nome de usuário ou email já utilizados', category='error')
     return render_template("register.html")
+
 
 @auth.route('/user_management', methods=['GET', 'POST'])
 def user_management():
-    db.dbConnect()
-    if request.method == 'GET':
-        search_type = request.form.get('searchType')
-        search_input = request.form.get('searchInput') .upper()
-        print('entrou no GET user_management')
-        users = user.listUser(search_type, search_input)
-        decoded_result = json.loads(users)
-        return render_template("user_management.html", decoded_result=decoded_result)
-    
     if request.method == 'POST':
         search_type = request.form.get('searchType')
         search_input = request.form.get('searchInput').upper()
-        users = user.listUser(search_type, search_input)
-        decoded_result = json.loads(users)
-        return render_template("user_management.html", decoded_result=decoded_result)
-    return render_template("user_management.html")
+    else:
+        search_type = request.args.get('searchType')
+        search_input = request.args.get('searchInput').upper()
+    users = user.listUser(search_type, search_input)
+    decoded_result = json.loads(users)
+    return render_template("user_management.html", decoded_result=decoded_result)
 
-@auth.route('/user_management/<string:userName>', methods=['DELETE'])
-def delete_user(userName):
+
+@auth.route('/user_management/<string:username>', methods=['DELETE'])
+def delete_user(username):
     if request.method == 'DELETE':
-        print('Entrou no delete')
-        user.deleteUser(userName)
-        print('Usuário excluído:', userName)
-        return jsonify({'mensagem': f'Usuário {userName} excluído com sucesso'})
+        user.deleteUser(username)
+        return jsonify({'mensagem': f'Usuário {username} excluído com sucesso'})

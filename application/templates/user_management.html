@@ -122,8 +122,8 @@
                     contentType: 'application/json',
                     success: function (result) {
                         console.log(result);
-                        location.reload();
-                        // Atualizar a tabela ou fazer outras ações necessárias
+                        location.reload();//Dá um reload na página automaticamente
+                        
                     }
                 });
             } else if (action === 'delete') {
@@ -135,7 +135,7 @@
                     success: function (result) {
                         console.log(result);
                         location.reload();//Dá um reload na página automaticamente
-                        // Atualizar a tabela ou fazer outras ações necessárias
+                        
                     }
                 });
             }
