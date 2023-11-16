@@ -25,22 +25,24 @@
     }
 </style>
 
-<div class="row g-2">
-    <div class="form-floating">
-        <select class="form-select custom-form-control" id="floatingSelectGrid">
-            <option selected>Nome</option>
-            <option value="1">Usuário</option>
-        </select>
-        <label for="floatingSelectGrid">Procurar por:</label>
+<form method="POST">
+    <div class="row g-2">
+        <div class="form-floating">
+            <select class="form-select custom-form-control" name="searchType">
+                <option value="firstName" selected>Nome</option>
+                <option value="userName">Usuário</option>
+            </select>
+            <label for="searchType">Procurar por:</label>
+        </div>
+        <div class="form-floating">
+            <input type="text" class="form-control custom-form-control" name="searchInput">
+            <label for="searchInput">Digite o Nome</label>
+        </div>
+        <div class="form-floating">
+            <button type="submit" class="btn btn-primary custom-form-control">Procurar</button>
+        </div>
     </div>
-    <div class="form-floating">
-        <input type="text" class="form-control custom-form-control" id="floatingInputGrid">
-        <label for="floatingInputGrid"></label>
-    </div>
-    <div class="form-floating">
-        <button type="button" class="btn btn-primary custom-form-control">Procurar</button>
-    </div>
-</div>
+</form>
 
 <div class="table-responsive">
     <table class="table table-striped table-hover">
@@ -61,8 +63,8 @@
                     <td>{{ valor.NM_USUARIO }}</td>
                     <td>{{ valor.DS_EMAIL }}</td>
                     <td>
-                        <button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-user-id="{{ valor.nr_sequencia }}">Editar</button>
-                        <button type="button" class="btn btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-user-id="{{ valor.nr_sequencia }}">Excluir</button>
+                        <button type="button" class="btn btn-warning edit-btn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-user-id="{{ valor.NM_USUARIO }}">Editar</button>
+                        <button type="button" class="btn btn-danger delete-btn" data-bs-toggle="modal" data-bs-target="#confirmModal" data-user-id="{{ valor.NM_USUARIO }}">Excluir</button>
                     </td>
                 </tr>
             {% endfor %}
@@ -88,14 +90,12 @@
         </div>
     </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
     $(document).ready(function () {
-        var userId; // Variável para armazenar o ID do usuário a ser editado ou excluído
+        var userName; // Variável para armazenar o ID do usuário a ser editado ou excluído
 
         $('.edit-btn, .delete-btn').click(function () {
-            userId = $(this).data('user-id');
+            userName = $(this).data('user-id');
         });
 
         $('#confirmModal').on('show.bs.modal', function (e) {
@@ -117,11 +117,12 @@
                 // Ação de editar
                 // Enviar requisição PUT
                 $.ajax({
-                    url: '/user/' + userId,
+                    url: '/user_management/' + userName,
                     type: 'PUT',
                     contentType: 'application/json',
                     success: function (result) {
                         console.log(result);
+                        location.reload();
                         // Atualizar a tabela ou fazer outras ações necessárias
                     }
                 });
@@ -129,10 +130,11 @@
                 // Ação de excluir
                 // Enviar requisição DELETE
                 $.ajax({
-                    url: '/user/' + userId,
+                    url: '/user_management/' + userName,
                     type: 'DELETE',
                     success: function (result) {
                         console.log(result);
+                        location.reload();//Dá um reload na página automaticamente
                         // Atualizar a tabela ou fazer outras ações necessárias
                     }
                 });
@@ -143,4 +145,5 @@
         });
     });
 </script>
+
 {% endblock %}

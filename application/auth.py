@@ -59,10 +59,29 @@ def register():
 
     return render_template("register.html")
 
-@auth.route('/user_management', methods=['GET','POST'])
+@auth.route('/user_management', methods=['GET', 'POST'])
 def user_management():
+    db.dbConnect()
     if request.method == 'GET':
-        print('entrou no get user_management')
-        users = user.listUsers()
+        search_type = request.form.get('searchType')
+        search_input = request.form.get('searchInput') .upper()
+        print('entrou no GET user_management')
+        users = user.listUser(search_type, search_input)
         decoded_result = json.loads(users)
-    return render_template("user_management.html",decoded_result=decoded_result)
+        return render_template("user_management.html", decoded_result=decoded_result)
+    
+    if request.method == 'POST':
+        search_type = request.form.get('searchType')
+        search_input = request.form.get('searchInput').upper()
+        users = user.listUser(search_type, search_input)
+        decoded_result = json.loads(users)
+        return render_template("user_management.html", decoded_result=decoded_result)
+    return render_template("user_management.html")
+
+@auth.route('/user_management/<string:userName>', methods=['DELETE'])
+def delete_user(userName):
+    if request.method == 'DELETE':
+        print('Entrou no delete')
+        user.deleteUser(userName)
+        print('Usuário excluído:', userName)
+        return jsonify({'mensagem': f'Usuário {userName} excluído com sucesso'})

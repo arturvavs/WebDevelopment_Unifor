@@ -107,4 +107,30 @@ class User(MongoDB):
         json_result = json.dumps(usuarios)
         return json_result
    
+    def deleteUser(self,userName):
+        self.dbConnect()
+        user_delete = {"NM_USUARIO":userName}
+        if not userName:
+            print('Usuário não encontrado')
+        else:
+            self.db.user.delete_one(user_delete)
+    
+    def listUser(self,search_type,search_input):
+        self.dbConnect()
+        projection = {"NM_PRIMEIRO_NOME": 1, "NM_ULTIMO_NOME": 1, "NM_USUARIO": 1, "DS_EMAIL": 1, "_id": 0}
+        if not search_input or not search_type:
+            users = list(self.db.user.find({},projection))
+            json_result = json.dumps(users)
+            return json_result
+        else:
+            if search_type == 'firstName':
+                users = list(self.db.user.find({"NM_PRIMEIRO_NOME":search_input},projection))
+                json_result = json.dumps(users)
+                return json_result
+            elif search_type =='userName':
+                users = list(self.db.user.find({"NM_USUARIO":search_input},projection))
+                json_result = json.dumps(users)
+                return json_result
+        
+
         
